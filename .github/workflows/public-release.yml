@@ -1,0 +1,47 @@
+name: Nightly Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Bump version, create tag, and push changes
+      id: bump_version
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        CURRENT_VERSION=$(cat package.json | jq -r ".version")
+        echo "Current version: $CURRENT_VERSION"
+        NEW_VERSION=$(npm version patch -m "Release version %s [skip ci]")
+        echo "New version: $NEW_VERSION"
+        git push --follow-tags
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      with:
+        tag_name: ${{ steps.bump_version.outputs.NEW_VERSION }}
+        release_name: Release ${{ steps.bump_version.outputs.NEW_VERSION }}
+        body: "Automated release created for version ${{ steps.bump_version.outputs.NEW_VERSION }}."
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
