@@ -1,0 +1,24 @@
+name: Docker
+
+on:
+  push:
+    branches: [dev]
+    tags: ["v*.*.*"]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: echo test env
+        run:  echo "Hello, this is an echo message ${{env.TEST}}"  

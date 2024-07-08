@@ -1,0 +1,55 @@
+name: Docker
+
+on:
+  push:
+    branches: [dev]
+    tags: ["v*.*.*"]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+  deploy:
+    needs: build_and_publish
+    runs-on: ubuntu-latest
+    steps:
+      # SSH into the server
+      - name: SSH into server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }} # Pass server IP
+          username: ${{ secrets.USERNAME }} # Pass server username
+          key: ${{ secrets.KEY }} # Pass server ssh private key
+          script: /home/ubuntu/deployAPI.sh
