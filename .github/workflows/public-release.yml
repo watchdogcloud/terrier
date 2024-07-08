@@ -4,10 +4,17 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type (major, minor, patch)'
+        required: true
+        default: 'patch'
 
+# https://docs.github.com/en/actions/learn-github-actions/variables
 env:
-  HUSKY: 0
-  
+  HUSKY: 0  
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,10 +26,31 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '20'
+        node-version: '20'  # Use Node.js 16 or later
 
     - name: Install dependencies
       run: npm install
+
+    - name: Commit any changes made during setup
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        if [ -n "$(git status --porcelain)" ]; then
+          git add .
+          git commit -m "chore: commit changes made during setup"
+          git push
+        fi
+
+    - name: Determine version bump
+      id: determine_version
+      run: |
+        case "${{ github.event.inputs.release_type }}" in
+          major) VERSION_BUMP="major" ;;
+          minor) VERSION_BUMP="minor" ;;
+          patch) VERSION_BUMP="patch" ;;
+          *) echo "Invalid release type"; exit 1 ;;
+        esac
+        echo "VERSION_BUMP=$VERSION_BUMP" >> $GITHUB_ENV
 
     - name: Bump version, create tag, and push changes
       id: bump_version
@@ -31,11 +59,12 @@ jobs:
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         CURRENT_VERSION=$(cat package.json | jq -r ".version")
         echo "Current version: $CURRENT_VERSION"
-        NEW_VERSION=$(npm version patch -m "Release version %s [skip ci]")
+        NEW_VERSION=$(npm version $VERSION_BUMP -m "Release version %s [skip ci]")
         echo "New version: $NEW_VERSION"
         git push --follow-tags
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VERSION_BUMP: ${{ env.VERSION_BUMP }}
 
     - name: Create GitHub Release
       id: create_release
