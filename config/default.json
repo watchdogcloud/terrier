@@ -9,24 +9,41 @@
   "authentication": {
     "entity": "user",
     "service": "users",
-    "secret": "7oDwQHZCUBnCsrJoLNGsbUbfvvU=",
+    "secret": "fcayYMajEwHSO2KmtEeem3fCgDA=",
     "authStrategies": [
       "jwt",
-      "local"
+      "local",
+      "server-otpless-whatsapp",
+      "local-otpless-whatsapp"
     ],
     "jwtOptions": {
       "header": {
         "typ": "access"
       },
-      "audience": "https://yourdomain.com",
+      "audience": "https://watchdog-eight.vercel.app",
       "issuer": "feathers",
       "algorithm": "HS256",
-      "expiresIn": "1d"
+      "expiresIn": "365d"
     },
     "local": {
       "usernameField": "email",
       "passwordField": "password"
+    },
+    "server-otpless-whatsapp": {
+      "usernameField": "phone",
+      "passwordField": "code"
+    },
+    "local-otpless-whatsapp": {
+      "usernameField": "phone",
+      "passwordField": "code"
     }
   },
-  "mongodb": "mongodb+srv://root:root@cluster0.nl9rmmq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+  "mongodb": "mongodb+srv://root:root@cluster0.hdg1iru.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+  "otpless": {
+    "clientId": "9180OD8RFAMI1IGNEEA24NU647UEUCD3",
+    "clientSecret": "1ovbsmy4ienf0877p4kk7x3h4ecljbj2",
+    "expiry": 300,
+    "otpLength": 6,
+    "hash": "hehehehe"
+  }
 }
