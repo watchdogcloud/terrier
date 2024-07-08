@@ -13,7 +13,7 @@ on:
 
 # https://docs.github.com/en/actions/learn-github-actions/variables
 env:
-  HUSKY: 0  
+  HUSKY: 0
 
 jobs:
   build:
@@ -26,7 +26,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '20'  # Use Node.js 16 or later
+        node-version: '16'  # Use Node.js 16 or later
 
     - name: Install dependencies
       run: npm install
@@ -40,6 +40,8 @@ jobs:
           git commit -m "chore: commit changes made during setup"
           git push
         fi
+      env:
+        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
 
     - name: Determine version bump
       id: determine_version
@@ -63,7 +65,7 @@ jobs:
         echo "New version: $NEW_VERSION"
         git push --follow-tags
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         VERSION_BUMP: ${{ env.VERSION_BUMP }}
 
     - name: Create GitHub Release
@@ -76,4 +78,4 @@ jobs:
         draft: false
         prerelease: false
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
