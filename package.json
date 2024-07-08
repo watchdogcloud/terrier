@@ -29,7 +29,8 @@
     "dev": "ts-node-dev --no-notify src/",
     "start": "yarn run compile && node lib/",
     "mocha": "mocha --require ts-node/register --require source-map-support/register \"test/**/*.ts\" --recursive --exit",
-    "compile": "shx rm -rf lib/ && chmod u+rwx ./decoratorfixer.sh && ./decoratorfixer.sh && tsc"
+    "compile": "shx rm -rf lib/ && chmod u+rwx ./decoratorfixer.sh && ./decoratorfixer.sh && tsc",
+    "prepare": "husky"
   },
   "standard": {
     "env": [
@@ -77,6 +78,7 @@
     "@typescript-eslint/parser": "^6.19.1",
     "axios": "^1.6.7",
     "eslint": "^8.17.0",
+    "husky": "^9.0.11",
     "jest": "^29.7.0",
     "shx": "^0.3.4",
     "ts-jest": "^29.1.2",
