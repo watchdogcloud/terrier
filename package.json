@@ -1,7 +1,7 @@
 {
   "name": "terrier",
   "description": "configuration and management server for watchdog",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "homepage": "",
   "private": true,
   "main": "src",
