@@ -1,8 +1,13 @@
 name: Docker
 
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
 on:
   push:
-    branches: [dev]
+    branches: [main]
     tags: ["v*.*.*"]
 
 env:
@@ -19,6 +24,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: setup env
+        run: cp ./config/prod.json ./config/production.json
 
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
@@ -41,15 +49,15 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-  deploy:
-    needs: build_and_publish
-    runs-on: ubuntu-latest
-    steps:
-      # SSH into the server
-      - name: SSH into server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }} # Pass server IP
-          username: ${{ secrets.USERNAME }} # Pass server username
-          key: ${{ secrets.KEY }} # Pass server ssh private key
-          script: /home/ubuntu/deployAPI.sh
+#  deploy:
+#    needs: build_and_publish
+#    runs-on: ubuntu-latest
+#    steps:
+#      # SSH into the server
+#      - name: SSH into server
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.HOST }} # Pass server IP
+#          username: ${{ secrets.USERNAME }} # Pass server username
+#          key: ${{ secrets.KEY }} # Pass server ssh private key
+#          script: /home/ubuntu/deployAPI.sh
