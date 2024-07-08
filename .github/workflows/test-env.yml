@@ -1,24 +1,20 @@
-name: Docker
+name: Test Build - Auth Server
 
 on:
   push:
-    branches: [dev]
-    tags: ["v*.*.*"]
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build_and_publish:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: echo test env
-        run:  echo "Hello, this is an echo message ${{env.TEST}}"  
+      - name: print to console
+        run: echo "Hello Watchdog! ${{env.TEST}} ${{github.repository}}"
