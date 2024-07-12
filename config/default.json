@@ -45,5 +45,8 @@
     "expiry": 300,
     "otpLength": 6,
     "hash": "hehehehe"
+  },
+  "kafka":{
+    "bootstrap-servers":[]
   }
 }
