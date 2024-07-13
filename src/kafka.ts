@@ -12,12 +12,11 @@ export default function (app: Application): void {
 }
 
 
-export const createConsumerOnTopic = async (app: Application, groupId: string, topics: string[]): Promise<Consumer[]> => {
-  const consumers: Consumer[] = [];
-  console.log({ createConsumerOnTopic: 'called' });
+export const createConsumerOnTopic = async (app: Application, groupId: string, topics: string[]): Promise<any[]> => {
+  const consumers = [];
+
   try {
     const kafka = app.get('kafka');
-
     for (let i = 0; i < topics.length; ++i) {
       const topic = topics[i];
       console.log({ topic });
@@ -40,18 +39,20 @@ export const createConsumerOnTopic = async (app: Application, groupId: string, t
 
       await consumer.connect();
       console.log('consumer is connected');
-      await consumer.subscribe({ topics: [topic] ,fromBeginning:true});
+      await consumer.subscribe({ topics: [topic], fromBeginning: true });
       console.log('consumer subscribed!');
       await consumer.run({
         eachMessage: async ({ topic, partition, message, heartbeat, pause }: EachMessagePayload) => {
           console.log({
+            topic,
+            partition,
             key: message?.key?.toString(),
             value: message?.value?.toString(),
             headers: message.headers,
           });
         },
       });
-      consumers.push(consumer);
+      consumers.push({ consumer, groupId });
     }
 
     return consumers;
@@ -130,13 +131,15 @@ export const createNewTopicIfDoesNotExist = async (app: Application): Promise<vo
   try {
     await admin.connect();
 
-    const existingTopics: ITopicMetadata[] = await admin.listTopics();
-    console.log({existingTopics});
     const desiredTopics = app.get('kafkaConf').topics;
 
-    // Checking if each desired topic exists with the correct partitions
+    // Fetch metadata for all existing topics
+    const existingTopicsMetadata = await admin.fetchTopicMetadata();
+    const existingTopics = existingTopicsMetadata.topics;
+
     for (const topic of desiredTopics) {
-      const topicExists = existingTopics.some(t => t.name === topic.name);
+      const topicInfo = existingTopics.find((t: any) => t.name === topic.name);
+      const topicExists = !!topicInfo;
 
       if (!topicExists) {
         // Topic does not exist, create it
@@ -151,8 +154,7 @@ export const createNewTopicIfDoesNotExist = async (app: Application): Promise<vo
         console.log(`Created topic '${topic.name}' with ${topic.numPartitions || 1} partitions.`);
       } else {
         // Topic exists, check if partitions match
-        const topicInfo = existingTopics.find(t => t.name === topic.name);
-        const currentPartitions = topicInfo?.partitions.length || 0;
+        const currentPartitions = topicInfo.partitions.length;
         const desiredPartitions = topic.numPartitions || 1;
 
         if (currentPartitions !== desiredPartitions) {
@@ -166,28 +168,22 @@ export const createNewTopicIfDoesNotExist = async (app: Application): Promise<vo
         }
       }
     }
-
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error creating or updating topics:', error);
-    throw new Error(error);
   } finally {
     await admin.disconnect();
   }
 };
-
 export const createAndSetProducer = async (app: Application) => {
   try {
     const p = createProducerOnTopic(app);
     await p.connect();
     console.log('producer connected');
-    await produceMessage(p, [
-      {
-        key: 'key1', value: 'hello world'
-      },
-      {
-        key: 'key1', value: 'hello bhadwa sala'
-      }
-    ], 'metrics');
+    setInterval(async () => {
+      await produceMessage(p, [
+        { key: new Date().toLocaleString(), value: `Soubhik is logging : ${new Date().toLocaleTimeString()}` }
+      ], 'metrics');
+    }, 1000);
     console.log('producer sent messages');
 
     app.set('kafkaProducer', p);

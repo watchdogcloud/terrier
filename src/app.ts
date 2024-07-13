@@ -48,7 +48,6 @@ app.configure(mongoose);
 app.configure(kafka);
 app.configure(createNewTopicIfDoesNotExist);
 app.configure(runConsumers);
-console.log('coming');
 app.configure(createAndSetProducer);
 
 
