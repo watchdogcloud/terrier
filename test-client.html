@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FeathersJS Socket Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+  <script src="https://unpkg.com/@feathersjs/client@4.5.11/dist/feathers.js"></script>
+</head>
+<body>
+  <script>
+    // Connect to the backend
+    const socket = io('http://localhost:3030', {
+      transports: ['websocket'],
+      withCredentials: true
+    });
+
+    const client = feathers();
+    client.configure(feathers.socketio(socket));
+    client.configure(feathers.authentication({
+      storage: window.localStorage // or window.sessionStorage
+    }));
+
+    socket.on('connect', async () => {
+      console.log('Connected to FeathersJS server');
+
+      try {
+        // Authenticate
+        const response = await client.authenticate({
+          strategy: 'local',
+          email: 'test@example.com', // replace with your test email
+          password: 'password' // replace with your test password
+        });
+        console.log('Authenticated:', response);
+
+        // Test real-time events
+        client.service('messages').on('created', message => {
+          console.log('New message created', message);
+        });
+
+        // Create a test message
+        const message = await client.service('messages').create({
+          text: 'Hello FeathersJS!'
+        });
+        console.log('Created message:', message);
+
+      } catch (error) {
+        console.error('Authentication error:', error);
+      }
+    });
+  </script>
+</body>
+</html>
