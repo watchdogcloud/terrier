@@ -32,8 +32,6 @@ export class KafkaAdministration implements ServiceMethods<Data> {
     //   return Promise.all(data.map(current => this.create(current, params)));
     // }
 
-    // user provides 
-
     return data;
   }
 

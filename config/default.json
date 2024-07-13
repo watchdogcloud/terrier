@@ -46,7 +46,7 @@
     "otpLength": 6,
     "hash": "hehehehe"
   },
-  "kafka":{
-    "bootstrap-servers":[]
+  "kafka": {
+    "bootstrap_servers": ["localhost:9092"]
   }
 }
