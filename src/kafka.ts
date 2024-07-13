@@ -1,18 +1,36 @@
-import { Admin, CompressionTypes, Consumer, ConsumerConfig, EachMessagePayload, ITopicMetadata, Kafka, Message, PartitionAssigners, Producer, logLevel } from 'kafkajs';
-import { Application } from './declarations';
+import {
+  Admin,
+  CompressionTypes,
+  Consumer,
+  ConsumerConfig,
+  EachMessagePayload,
+  ITopicMetadata,
+  Kafka,
+  Message,
+  PartitionAssigners,
+  Producer,
+  logLevel
+} from 'kafkajs';
+import {
+  Application
+} from './declarations';
 
 export default function (app: Application): void {
-
-  const kafka = new Kafka({
-    clientId: 'terrier',
-    brokers: app.get('kafkaConf').bootstrap_servers,
-    logLevel: logLevel.ERROR
-  });
-  app.set('kafka', kafka);
+  try {
+    const kafka = new Kafka({
+      clientId: 'terrier',
+      brokers: app.get('kafkaConf').bootstrap_servers,
+      logLevel: logLevel.ERROR
+    });
+    app.set('kafka', kafka);
+  } catch (error: any) {
+    console.error(error);
+    throw new Error(error);
+  }
 }
 
 
-export const createConsumerOnTopic = async (app: Application, groupId: string, topics: string[]): Promise<any[]> => {
+export const createConsumerOnTopic = async (app: Application, groupId: string, topics: string[], taskHandler: any): Promise<any[]> => {
   const consumers = [];
 
   try {
@@ -41,15 +59,11 @@ export const createConsumerOnTopic = async (app: Application, groupId: string, t
       console.log('consumer is connected');
       await consumer.subscribe({ topics: [topic], fromBeginning: true });
       console.log('consumer subscribed!');
+
       await consumer.run({
-        eachMessage: async ({ topic, partition, message, heartbeat, pause }: EachMessagePayload) => {
-          console.log({
-            topic,
-            partition,
-            key: message?.key?.toString(),
-            value: message?.value?.toString(),
-            headers: message.headers,
-          });
+        eachMessage: async (payload: EachMessagePayload) => {
+          await taskHandler(payload);
+          console.log(payload);
         },
       });
       consumers.push({ consumer, groupId });
@@ -106,10 +120,9 @@ const createProducerOnTopic: any = (app: Application): Producer => {
   }
 };
 
-const produceMessage = async (producer: Producer, kvObject: Array<Message>, topicName: string) => {
+export const produceMessage = async (producer: Producer, kvObject: Array<Message>, topicName: string) => {
 
   try {
-    await producer.connect();
     await producer.send({
       topic: topicName,
       messages: kvObject,
@@ -179,13 +192,6 @@ export const createAndSetProducer = async (app: Application) => {
     const p = createProducerOnTopic(app);
     await p.connect();
     console.log('producer connected');
-    setInterval(async () => {
-      await produceMessage(p, [
-        { key: new Date().toLocaleString(), value: `Soubhik is logging : ${new Date().toLocaleTimeString()}` }
-      ], 'metrics');
-    }, 1000);
-    console.log('producer sent messages');
-
     app.set('kafkaProducer', p);
   } catch (error: any) {
     console.error(error);
