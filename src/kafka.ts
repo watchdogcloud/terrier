@@ -1,11 +1,11 @@
-import { CompressionTypes, Consumer, ConsumerConfig, EachMessagePayload, Kafka, Message, PartitionAssigners, Producer } from 'kafkajs';
+import { Admin, CompressionTypes, Consumer, ConsumerConfig, EachMessagePayload, ITopicMetadata, Kafka, Message, PartitionAssigners, Producer } from 'kafkajs';
 import { Application } from './declarations';
 
 export default function (app: Application): void {
 
   const kafka = new Kafka({
     clientId: 'terrier',
-    brokers: app.get('kafka').bootstrap_servers,
+    brokers: app.get('kafkaConf').bootstrap_servers,
   });
 
   app.set('kafka', kafka);
@@ -21,39 +21,43 @@ export default function (app: Application): void {
   });
 }
 
-export const createConsumerOnTopic = async (app: Application, groupId: string): Promise<Consumer> => {
-  try {
-    const consumer: Consumer = app.get('kafka').consumer({
-      groupId: groupId,
-      partitionAssigners: [PartitionAssigners.roundRobin],
-      sessionTimeout: 30000,
-      rebalanceTimeout: 60000,
-      heartbeatInterval: 3000,
-      metadataMaxAge: 300000,
-      allowAutoTopicCreation: true,
-      maxBytesPerPartition: 1048576,//1MB
-      minBytes: 1,
-      maxBytes: 10485760,
-      maxWaitTimeInMs: 5000,
-      retry: {
-        retries: 5
-      },
-      readUncommitted: false,
-      maxInFlightRequests: null,
-      /**
-       * {@link https://www.confluent.io/blog/multi-region-data-replication/}
-       */
-      rackId: null
-    });
+export const createConsumerOnTopic = async (app: Application, groupId: string, topics: string[]): Promise<Consumer[]> => {
+  const consumers: Consumer[] = [];
 
-    await consumer.connect();
-    await consumer.subscribe({ topics: ['topic-B', 'topic-C'] });
-    return consumer;
+  try {
+    const kafka = app.get('kafka');
+
+    for (const topic of topics) {
+      const consumer: Consumer = kafka.consumer({
+        groupId: groupId,
+        partitionAssigners: [PartitionAssigners.roundRobin],
+        sessionTimeout: 30000,
+        rebalanceTimeout: 60000,
+        heartbeatInterval: 3000,
+        metadataMaxAge: 300000,
+        allowAutoTopicCreation: true,
+        maxBytesPerPartition: 1048576,
+        minBytes: 1,
+        maxBytes: 10485760,
+        maxWaitTimeInMs: 5000,
+        retry: { retries: 5 },
+        readUncommitted: false,
+        maxInFlightRequests: null,
+        rackId: null, // Optionally specify rackId
+      });
+
+      await consumer.connect();
+      await consumer.subscribe({ topics: [topic] });
+      consumers.push(consumer);
+    }
+
+    return consumers;
   } catch (error: any) {
-    console.log(error);
+    console.error('Error creating consumers:', error);
     throw new Error(error);
   }
 };
+
 
 const consumeMessage = async (consumer: Consumer) => {
   /**
@@ -98,4 +102,56 @@ const produceMessage = async (producer: Producer, kvObject: Array<Message>, topi
     timeout: 30000,
     compression: CompressionTypes.None
   });
+};
+
+export const createNewTopicIfDoesNotExist = async (app: Application): Promise<void> => {
+  const kafka = app.get('kafka');
+  const admin = kafka.admin();
+
+  try {
+    await admin.connect();
+
+    const existingTopics: ITopicMetadata[] = await admin.listTopics();
+
+    const desiredTopics = app.get('kafkaConf').topics;
+
+    // Checking if each desired topic exists with the correct partitions
+    for (const topic of desiredTopics) {
+      const topicExists = existingTopics.some(t => t.name === topic.name);
+
+      if (!topicExists) {
+        // Topic does not exist, create it
+        await admin.createTopics({
+          topics: [{
+            topic: topic.name,
+            numPartitions: topic.numPartitions || 1,
+            replicationFactor: topic.replicationFactor || 1,
+          }],
+        });
+
+        console.log(`Created topic '${topic.name}' with ${topic.numPartitions || 1} partitions.`);
+      } else {
+        // Topic exists, check if partitions match
+        const topicInfo = existingTopics.find(t => t.name === topic.name);
+        const currentPartitions = topicInfo?.partitions.length || 0;
+        const desiredPartitions = topic.numPartitions || 1;
+
+        if (currentPartitions !== desiredPartitions) {
+          console.log(`Topic '${topic.name}' exists but has ${currentPartitions} partitions. Updating to ${desiredPartitions} partitions.`);
+          await admin.createPartitions({
+            topicPartitions: [{
+              topic: topic.name,
+              count: desiredPartitions,
+            }],
+          });
+        }
+      }
+    }
+
+  } catch (error: any) {
+    console.error('Error creating or updating topics:', error);
+    throw new Error(error);
+  } finally {
+    await admin.disconnect();
+  }
 };

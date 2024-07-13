@@ -1,9 +1,7 @@
 import { Application } from './declarations';
 
-export default function (app: Application): void {
-    
+export default async function (app: Application): Promise<void> {
+
   const createConsumerOnTopic = app.get('consumerConfs').createConsumerOnTopic;
-  const groupId = 'critical.alert.group';
-  const topics = ['metrics'];
-    
-};
+
+};  

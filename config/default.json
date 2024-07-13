@@ -46,7 +46,21 @@
     "otpLength": 6,
     "hash": "hehehehe"
   },
-  "kafka": {
-    "bootstrap_servers": ["localhost:9092"]
+  "kafkaConf": {
+    "bootstrap_servers": [
+      "localhost:9092"
+    ],
+    "topics": [
+      {
+        "name": "metrics",
+        "numPartitions": 2,
+        "replicationFactor": 1
+      },
+      {
+        "name": "critical.metrics.alert",
+        "numPartitions": 3,
+        "replicationFactor": 1
+      }
+    ]
   }
 }
