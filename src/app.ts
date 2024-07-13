@@ -20,6 +20,7 @@ import { HookContext as FeathersHookContext } from '@feathersjs/feathers';
 import authentication from './authentication';
 import mongoose from './mongoose';
 import kafka from './kafka';
+import runConsumers from './run-consumers';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const app: Application = express(feathers());
@@ -45,6 +46,7 @@ app.configure(socketio());
 
 app.configure(mongoose);
 app.configure(kafka);
+app.configure(runConsumers);
 
 // Configure other middleware (see `middleware/index.ts`)
 app.configure(middleware);
