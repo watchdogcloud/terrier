@@ -1,4 +1,4 @@
-import { Admin, CompressionTypes, Consumer, ConsumerConfig, EachMessagePayload, ITopicMetadata, Kafka, Message, PartitionAssigners, Producer } from 'kafkajs';
+import { Admin, CompressionTypes, Consumer, ConsumerConfig, EachMessagePayload, ITopicMetadata, Kafka, Message, PartitionAssigners, Producer, logLevel } from 'kafkajs';
 import { Application } from './declarations';
 
 export default function (app: Application): void {
@@ -6,31 +6,24 @@ export default function (app: Application): void {
   const kafka = new Kafka({
     clientId: 'terrier',
     brokers: app.get('kafkaConf').bootstrap_servers,
+    logLevel: logLevel.ERROR
   });
-
   app.set('kafka', kafka);
-
-  app.set('consumerConfs', {
-    createConsumerOnTopic,
-    consumeMessage
-  });
-
-  app.set('producerConfs', {
-    createProducerOnTopic,
-    produceMessage
-  });
 }
+
 
 export const createConsumerOnTopic = async (app: Application, groupId: string, topics: string[]): Promise<Consumer[]> => {
   const consumers: Consumer[] = [];
-
+  console.log({ createConsumerOnTopic: 'called' });
   try {
     const kafka = app.get('kafka');
 
-    for (const topic of topics) {
+    for (let i = 0; i < topics.length; ++i) {
+      const topic = topics[i];
+      console.log({ topic });
       const consumer: Consumer = kafka.consumer({
         groupId: groupId,
-        partitionAssigners: [PartitionAssigners.roundRobin],
+        // partitionAssigners: [PartitionAssigners.roundRobin],
         sessionTimeout: 30000,
         rebalanceTimeout: 60000,
         heartbeatInterval: 3000,
@@ -43,11 +36,21 @@ export const createConsumerOnTopic = async (app: Application, groupId: string, t
         retry: { retries: 5 },
         readUncommitted: false,
         maxInFlightRequests: null,
-        rackId: null, // Optionally specify rackId
       });
 
       await consumer.connect();
-      await consumer.subscribe({ topics: [topic] });
+      console.log('consumer is connected');
+      await consumer.subscribe({ topics: [topic] ,fromBeginning:true});
+      console.log('consumer subscribed!');
+      await consumer.run({
+        eachMessage: async ({ topic, partition, message, heartbeat, pause }: EachMessagePayload) => {
+          console.log({
+            key: message?.key?.toString(),
+            value: message?.value?.toString(),
+            headers: message.headers,
+          });
+        },
+      });
       consumers.push(consumer);
     }
 
@@ -63,45 +66,61 @@ const consumeMessage = async (consumer: Consumer) => {
   /**
    * @note Be aware that the eachMessage handler should not block for longer than the configured session timeout or else the consumer will be removed from the group. If your workload involves very slow processing times for individual messages then you should either increase the session timeout or make periodic use of the heartbeat function exposed in the handler payload. The pause function is a convenience for consumer.pause({ topic, partitions: [partition] }). It will pause the current topic-partition and returns a function that allows you to resume consuming later.
    */
-  await consumer.run({
-    eachMessage: async ({ topic, partition, message, heartbeat, pause }: EachMessagePayload) => {
-      console.log({
-        key: message?.key?.toString(),
-        value: message?.value?.toString(),
-        headers: message.headers,
-      });
-    },
-  });
+  try {
+    await consumer.run({
+      eachMessage: async ({ topic, partition, message, heartbeat, pause }: EachMessagePayload) => {
+        console.log({
+          key: message?.key?.toString(),
+          value: message?.value?.toString(),
+          headers: message.headers,
+        });
+      },
+    });
+  } catch (error: any) {
+    console.error(error);
+    throw new Error(error);
+  }
 };
 
-const createProducerOnTopic = async (app: Application): Promise<Producer> => {
+const createProducerOnTopic: any = (app: Application): Producer => {
 
-  /**
-   * {@link https://kafka.js.org/docs/producing#options}
-   */
-  const producer: Producer = app.get('kafka').producer({
-    allowAutoTopicCreation: false,
-    transactionTimeout: 60000,
-    createPartitioner: null,
-    retry: null,
-    metadataMaxAge: 300000,
-    idempotent: false, // EXPERIMENTAL
-    maxInFlightRequests: null
-  });
-
-  return producer;
+  try {
+    /**
+     * {@link https://kafka.js.org/docs/producing#options}
+     */
+    const kafka = app.get('kafka');
+    const producer: Producer = kafka.producer({
+      allowAutoTopicCreation: false,
+      transactionTimeout: 60000,
+      retry: null,
+      metadataMaxAge: 300000,
+      idempotent: false, // EXPERIMENTAL
+      maxInFlightRequests: null
+    });
+    return producer;
+  }
+  catch (error: any) {
+    console.error(error);
+    throw new Error(error);
+  }
 };
 
 const produceMessage = async (producer: Producer, kvObject: Array<Message>, topicName: string) => {
 
-  await producer.connect();
-  await producer.send({
-    topic: topicName,
-    messages: kvObject,
-    acks: -1,
-    timeout: 30000,
-    compression: CompressionTypes.None
-  });
+  try {
+    await producer.connect();
+    await producer.send({
+      topic: topicName,
+      messages: kvObject,
+      acks: -1,
+      timeout: 30000,
+      compression: CompressionTypes.None
+    });
+  } catch (error: any) {
+    console.error(error);
+    throw new Error(error);
+  }
+
 };
 
 export const createNewTopicIfDoesNotExist = async (app: Application): Promise<void> => {
@@ -112,7 +131,7 @@ export const createNewTopicIfDoesNotExist = async (app: Application): Promise<vo
     await admin.connect();
 
     const existingTopics: ITopicMetadata[] = await admin.listTopics();
-
+    console.log({existingTopics});
     const desiredTopics = app.get('kafkaConf').topics;
 
     // Checking if each desired topic exists with the correct partitions
@@ -154,4 +173,27 @@ export const createNewTopicIfDoesNotExist = async (app: Application): Promise<vo
   } finally {
     await admin.disconnect();
   }
+};
+
+export const createAndSetProducer = async (app: Application) => {
+  try {
+    const p = createProducerOnTopic(app);
+    await p.connect();
+    console.log('producer connected');
+    await produceMessage(p, [
+      {
+        key: 'key1', value: 'hello world'
+      },
+      {
+        key: 'key1', value: 'hello bhadwa sala'
+      }
+    ], 'metrics');
+    console.log('producer sent messages');
+
+    app.set('kafkaProducer', p);
+  } catch (error: any) {
+    console.error(error);
+    throw new Error(error);
+  }
+
 };

@@ -53,7 +53,7 @@
     "topics": [
       {
         "name": "metrics",
-        "numPartitions": 2,
+        "numPartitions": 3,
         "replicationFactor": 1
       },
       {
