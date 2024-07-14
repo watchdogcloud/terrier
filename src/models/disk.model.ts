@@ -1,4 +1,4 @@
-// recv-data-model.ts - A mongoose model
+// metrics/disk-model.ts - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
@@ -6,28 +6,39 @@ import { Application } from '../declarations';
 import { Model, Mongoose } from 'mongoose';
 
 export default function (app: Application): Model<any> {
-  const modelName = 'recvData';
+  const modelName = 'disk';
   const mongooseClient: Mongoose = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const schema = new Schema({
-    cpu: {
-      type: Schema.Types.ObjectId,
-      ref: 'cpu'
+    path: {
+      type: String,
     },
-    disk: {
-      type: Schema.Types.ObjectId,
-      ref: 'disk'
+    fstype: {
+      type: String,
     },
-    mem: {
-      type: Schema.Types.ObjectId,
-      ref: 'mem'
+    total: {
+      type: Number,
     },
-    network: {
-      type: Schema.Types.ObjectId,
-      ref: 'network'
+    free: {
+      type: Number,
     },
-    deleted: {
-      
+    used: {
+      type: Number,
+    },
+    usedPercent: {
+      type: Number,
+    },
+    inodesTotal: {
+      type: Number,
+    },
+    inodesUsed: {
+      type: Number,
+    },
+    inodesFree: {
+      type: Number,
+    },
+    inodesUsedPercent: {
+      type: Number,
     }
   }, {
     timestamps: true

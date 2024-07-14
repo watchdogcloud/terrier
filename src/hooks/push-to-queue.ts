@@ -16,10 +16,10 @@ export default (options = {}): Hook => {
       /**avoid key for allowing round robin  */
       await produceMessage(producer, [
         {
-          value: 'rona',
+          value: data,
         }
       ],
-      'metrics');
+      'system.metrics');
 
       return context;
     } catch (error: any) {

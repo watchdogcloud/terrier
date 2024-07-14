@@ -1,4 +1,4 @@
-// recv-data-model.ts - A mongoose model
+// metrics/network-model.ts - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
@@ -6,28 +6,42 @@ import { Application } from '../declarations';
 import { Model, Mongoose } from 'mongoose';
 
 export default function (app: Application): Model<any> {
-  const modelName = 'recvData';
+  const modelName = 'network';
   const mongooseClient: Mongoose = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const schema = new Schema({
-    cpu: {
-      type: Schema.Types.ObjectId,
-      ref: 'cpu'
+    name: {
+      type: String,
     },
-    disk: {
-      type: Schema.Types.ObjectId,
-      ref: 'disk'
+    bytesSent: {
+      type: Number,
     },
-    mem: {
-      type: Schema.Types.ObjectId,
-      ref: 'mem'
+    bytesRecv: {
+      type: Number,
     },
-    network: {
-      type: Schema.Types.ObjectId,
-      ref: 'network'
+    packetsSent: {
+      type: Number,
     },
-    deleted: {
-      
+    packetsRecv: {
+      type: Number,
+    },
+    errin: {
+      type: Number,
+    },
+    errout: {
+      type: Number,
+    },
+    dropin: {
+      type: Number,
+    },
+    dropout: {
+      type: Number,
+    },
+    fifoin: {
+      type: Number,
+    },
+    fifoout: {
+      type: Number,
     }
   }, {
     timestamps: true
