@@ -1,4 +1,4 @@
-// recv-data-model.ts - A mongoose model
+// metrics/cpu-model.ts - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
@@ -6,29 +6,15 @@ import { Application } from '../declarations';
 import { Model, Mongoose } from 'mongoose';
 
 export default function (app: Application): Model<any> {
-  const modelName = 'recvData';
+  const modelName = 'cpu';
   const mongooseClient: Mongoose = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const schema = new Schema({
-    cpu: {
-      type: Schema.Types.ObjectId,
-      ref: 'cpu'
-    },
-    disk: {
-      type: Schema.Types.ObjectId,
-      ref: 'disk'
-    },
-    mem: {
-      type: Schema.Types.ObjectId,
-      ref: 'mem'
-    },
-    network: {
-      type: Schema.Types.ObjectId,
-      ref: 'network'
-    },
-    deleted: {
-      
-    }
+    cpu: [
+      {
+        type: Number
+      }
+    ],
   }, {
     timestamps: true
   });

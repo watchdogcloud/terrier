@@ -1,51 +1,79 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>FeathersJS Socket Test</title>
-  <script src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
-  <script src="https://unpkg.com/@feathersjs/client@4.5.11/dist/feathers.js"></script>
-</head>
-<body>
-  <script>
-    // Connect to the backend
-    const socket = io('http://localhost:3030', {
-      transports: ['websocket'],
-      withCredentials: true
-    });
+  <!DOCTYPE html>
+  <html lang="en">
 
-    const client = feathers();
-    client.configure(feathers.socketio(socket));
-    client.configure(feathers.authentication({
-      storage: window.localStorage // or window.sessionStorage
-    }));
+  <head>
+    <meta charset="UTF-8">
+    <title>Feathers Example</title>
+    <link rel="stylesheet" href="https://unpkg.com/feathers-chat@4.0.0/public/base.css">
+    <link rel="stylesheet" href="https://unpkg.com/feathers-chat@4.0.0/public/chat.css">
+  </head>
 
-    socket.on('connect', async () => {
-      console.log('Connected to FeathersJS server');
+  <body>
+    <main id="main" class="container">
+      <h1>Welcome to Feathers</h1>
+      <form class="form" onsubmit="sendMessage(event.preventDefault())">
+        <input type="text" id="message-text" placeholder="Enter message here">
+        <button type="submit" class="button button-primary">Send message</button>
+      </form>
+
+      <h2>Here are the current messages:</h2>
+    </main>
+
+    <script src="https://unpkg.com/@feathersjs/client@^4.3.0/dist/feathers.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+    <script type="text/javascript">
+      // Set up socket.io
+      const socket = io('http://localhost:3030');
+      // Initialize a Feathers app
+      const app = feathers();
+
+      // Register socket.io to talk to our server
+      app.configure(feathers.socketio(socket));
+      app.configure(authentication())
 
       try {
-        // Authenticate
-        const response = await client.authenticate({
+        // Authenticate with the local email/password strategy
+        await app.authenticate({
           strategy: 'local',
-          email: 'test@example.com', // replace with your test email
-          password: 'password' // replace with your test password
-        });
-        console.log('Authenticated:', response);
-
-        // Test real-time events
-        client.service('messages').on('created', message => {
-          console.log('New message created', message);
-        });
-
-        // Create a test message
-        const message = await client.service('messages').create({
-          text: 'Hello FeathersJS!'
-        });
-        console.log('Created message:', message);
-
+          email: 'my@email.com',
+          password: 'my-password'
+        })
+        // Show e.g. logged in dashboard page
       } catch (error) {
-        console.error('Authentication error:', error);
+        // Show login page (potentially with `e.message`)
+        console.error('Authentication error', e)
       }
-    });
-  </script>
-</body>
-</html>
+      // Form submission handler that sends a new message
+      async function sendMessage() {
+        const messageInput = document.getElementById('message-text');
+
+        // Create a new message with the input field value
+        await app.service('messages').create({
+          text: messageInput.value
+        });
+
+        messageInput.value = '';
+      }
+
+      // Renders a single message on the page
+      function addMessage(message) {
+        document.getElementById('main').innerHTML += `<p>${message.data[message.data.length - 1]}</p>`;
+      }
+
+      const main = async () => {
+        // Find all existing messages
+        console.log('running!!')
+        const messages = await app.service('messages').find();
+
+        // Add existing messages to the list
+        messages.forEach(addMessage);
+
+        // Add any newly created message to the list in real-time
+        app.service('messages').on('created', addMessage);
+      };
+
+      main();
+    </script>
+  </body>   
+
+  </html>
