@@ -22,13 +22,10 @@ export default function (app: Application): Model<any> {
       type: Schema.Types.ObjectId,
       ref: 'mem'
     },
-    network: {
+    network: [{
       type: Schema.Types.ObjectId,
       ref: 'network'
-    },
-    deleted: {
-      
-    }
+    }],
   }, {
     timestamps: true
   });

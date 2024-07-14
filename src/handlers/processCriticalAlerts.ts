@@ -2,7 +2,7 @@ import { EachMessagePayload } from 'kafkajs';
 
 const processCriticalAlerts = async (payload: EachMessagePayload) => {
   try {
-    console.log(payload.message.toString());
+    console.log('criti');
   } catch (error: any) {
     console.error(error);
     throw new Error(error);

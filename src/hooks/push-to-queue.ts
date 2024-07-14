@@ -12,15 +12,21 @@ export default (options = {}): Hook => {
         data,
       } = context;
       const producer = app.get('kafkaProducer');
-
       /**avoid key for allowing round robin  */
+     
       await produceMessage(producer, [
         {
-          value: data,
+          value: Buffer.from(JSON.stringify(data)),
         }
       ],
       'system.metrics');
 
+      context.result = {
+        message: 'pushed to queue successfully',
+        code:200,
+        ack:'true'
+      };
+      
       return context;
     } catch (error: any) {
       console.error(error);
