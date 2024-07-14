@@ -20,7 +20,7 @@
       "header": {
         "typ": "access"
       },
-      "audience": "https://watchdog-eight.vercel.app",
+      "audience": "https://yourdomain.com",
       "issuer": "feathers",
       "algorithm": "HS256",
       "expiresIn": "365d"
@@ -38,7 +38,7 @@
       "passwordField": "code"
     }
   },
-  "mongodb": "mongodb+srv://root:root@cluster0.hdg1iru.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+  "mongodb": "mongodb+srv://root:root@cluster0.nl9rmmq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
   "otpless": {
     "clientId": "9180OD8RFAMI1IGNEEA24NU647UEUCD3",
     "clientSecret": "1ovbsmy4ienf0877p4kk7x3h4ecljbj2",
@@ -52,12 +52,12 @@
     ],
     "topics": [
       {
-        "name": "metrics",
+        "name": "system.metrics",
         "numPartitions": 3,
         "replicationFactor": 1
       },
       {
-        "name": "critical.metrics.alert",
+        "name": "system.alerts.critical",
         "numPartitions": 3,
         "replicationFactor": 1
       }

@@ -1,6 +1,7 @@
 // Use this hook to manipulate incoming or outgoing data.
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers';
+import { produceMessage } from '../kafka';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default (options = {}): Hook => {
@@ -10,8 +11,16 @@ export default (options = {}): Hook => {
         app,
         data,
       } = context;
-      const kafka = app.get('kafka');
- 
+      const producer = app.get('kafkaProducer');
+
+      /**avoid key for allowing round robin  */
+      await produceMessage(producer, [
+        {
+          value: 'rona',
+        }
+      ],
+      'metrics');
+
       return context;
     } catch (error: any) {
       console.error(error);
