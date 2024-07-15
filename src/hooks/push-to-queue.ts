@@ -10,23 +10,33 @@ export default (options = {}): Hook => {
       const {
         app,
         data,
+        params,
       } = context;
       const producer = app.get('kafkaProducer');
-      /**avoid key for allowing round robin  */
-     
+
+      /**
+       * avoid key for allowing round robin
+       */
       await produceMessage(producer, [
         {
           value: Buffer.from(JSON.stringify(data)),
         }
       ],
       'system.metrics');
-
+      console.log('params.user', params.user);
+      
       context.result = {
         message: 'pushed to queue successfully',
-        code:200,
-        ack:'true'
+        code: 200,
+        ack: 'true',
+        data,
+        user: params.user
       };
-      
+
+      // context.service.emit('recvecho', {
+      //   'bbsr': true
+      // })
+
       return context;
     } catch (error: any) {
       console.error(error);

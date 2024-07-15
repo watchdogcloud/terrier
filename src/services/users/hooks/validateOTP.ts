@@ -7,26 +7,27 @@ import { verifyOTP } from '../../../utilities/otpless';
 const validateOTP = (): Hook => async (context) => {
 
   const { app, data, params } = context;
-  const authService = app.service('authentication');
+  console.log('aya', data);
+  // const authService = app.service('authentication');
 
-  const authHeader = params.headers && params.headers.authorization;
+  // const authHeader = params.headers && params.headers.authorization;
 
-  if (authHeader && authHeader.startsWith('Bearer ')) {
+  // if (authHeader && authHeader.startsWith('Bearer ')) {
 
-    const accessToken = authHeader.split(' ')[1];
-    const authResult = await authService.create({
-      'strategy': 'jwt',
-      'accessToken': accessToken
-    });
-    // console.log(authResult, accessToken)
-    params.user = authResult.user;
+  //   const accessToken = authHeader.split(' ')[1];
+  //   const authResult = await authService.create({
+  //     'strategy': 'jwt',
+  //     'accessToken': accessToken
+  //   });
+  //   // console.log(authResult, accessToken)
+  //   params.user = authResult.user;
 
-    if (params.user
-      && (params.user.type === RolesEnum.ADMIN
-        || params.user.type === RolesEnum.SUPER_ADMIN)) {
-      return context;
-    }
-  }
+  //   if (params.user
+  //     && (params.user.type === RolesEnum.ADMIN
+  //       || params.user.type === RolesEnum.SUPER_ADMIN)) {
+  //     return context;
+  //   }
+  // }
 
   if (!data.phone || !data.otp) throw new BadRequest('Phone and OTP is required.');
 

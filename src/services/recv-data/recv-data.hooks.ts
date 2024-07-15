@@ -2,12 +2,15 @@ import { HooksObject } from '@feathersjs/feathers';
 
 import pushToQueue from '../../hooks/push-to-queue';
 
+import * as feathersAuthentication from '@feathersjs/authentication';
+const { authenticate } = feathersAuthentication.hooks;
+
 export default {
   before: {
     all: [],
     find: [],
     get: [],
-    create: [pushToQueue()],
+    create: [authenticate('jwt'), pushToQueue()],
     update: [],
     patch: [],
     remove: []
