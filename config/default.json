@@ -62,5 +62,8 @@
         "replicationFactor": 1
       }
     ]
+  },
+  "keygen": {
+    "length": 32
   }
 }

@@ -63,7 +63,6 @@ export const createConsumerOnTopic = async (app: Application, groupId: string, t
       await consumer.run({
         eachMessage: async (payload: EachMessagePayload) => {
           await taskHandler(payload);
-          console.log(payload);
         },
       });
       consumers.push({ consumer, groupId });
@@ -120,16 +119,20 @@ const createProducerOnTopic: any = (app: Application): Producer => {
   }
 };
 
+let i = 0;
 export const produceMessage = async (producer: Producer, kvObject: Array<Message>, topicName: string) => {
 
   try {
-    await producer.send({
+    i+=1;
+    console.log('called i = ',i);
+    const x = await producer.send({
       topic: topicName,
       messages: kvObject,
       acks: -1,
       timeout: 30000,
       compression: CompressionTypes.None
     });
+    console.log(x);
   } catch (error: any) {
     console.error(error);
     throw new Error(error);
