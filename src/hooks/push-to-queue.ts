@@ -2,6 +2,7 @@
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers';
 import { produceMessage } from '../kafka';
+import { BadRequest } from '@feathersjs/errors';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default (options = {}): Hook => {
@@ -17,20 +18,37 @@ export default (options = {}): Hook => {
       /**
        * avoid key for allowing round robin
        */
+      const apiKey = context.params.headers?.['api-key'];
+
+      const [keyOwner] = await app.service('keys')._find({
+        query: {
+          key: apiKey,
+          status: 'active',
+        },
+        paginate: false,
+      });
+
+      if (!keyOwner) throw new BadRequest('Invalid API Key');
+
+      data['keyOwner'] = keyOwner;
+
       await produceMessage(producer, [
         {
           value: Buffer.from(JSON.stringify(data)),
         }
       ],
       'system.metrics');
-      console.log('params.user', params.user);
-      
+
+      await app.service('keys')._patch(keyOwner._id, {
+        $inc: { totalCalls: 1 }
+      });
+
       context.result = {
         message: 'pushed to queue successfully',
         code: 200,
         ack: 'true',
         data,
-        user: params.user
+        user: keyOwner.user
       };
 
       // context.service.emit('recvecho', {

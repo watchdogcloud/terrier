@@ -10,7 +10,7 @@ export default {
     all: [],
     find: [],
     get: [],
-    create: [authenticate('jwt'), pushToQueue()],
+    create: [pushToQueue()],
     update: [],
     patch: [],
     remove: []

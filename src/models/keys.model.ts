@@ -24,6 +24,12 @@ export default function (app: Application): Model<any> {
       required: true,
       index: true,
     },
+    project: {
+      type: Schema.Types.ObjectId,
+      ref: 'projects',
+      required: true,
+      index: true,
+    },
     status: {
       type: String,
       enum: ['active', 'revoked'],

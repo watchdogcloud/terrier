@@ -11,7 +11,7 @@ const insertIntoDatabase = async (payload: EachMessagePayload) => {
 
     const messageString = payload.message.value.toString();
     const message = JSON.parse(messageString);
-    const { cpu, disk, mem, network } = message;
+    const { cpu, disk, mem, network, keyOwner } = message;
 
     const [cpuRes, diskRes, memRes, networkRes] = await Promise.all([
       app.service('metrics/cpu')._create({ cpu }),
@@ -27,9 +27,11 @@ const insertIntoDatabase = async (payload: EachMessagePayload) => {
       network: Array.isArray(networkRes) ? networkRes.map((net: any) => net._id) : networkRes._id,
     };
 
-    fs.writeFileSync('met.json',JSON.stringify(ids));
+    fs.writeFileSync('met.json', JSON.stringify(ids));
 
     await app.service('recv-data')._create(ids);
+
+    console.log('queue se nikalke keyOwner = ', keyOwner);
   } catch (error: any) {
     console.error('Error inserting into database:', error.message, error.stack);
     throw new Error(error);

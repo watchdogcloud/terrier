@@ -1,4 +1,5 @@
 import * as authentication from '@feathersjs/authentication';
+import setCreatedBy from '../../hooks/setCreatedBy';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const { authenticate } = authentication.hooks;
@@ -8,7 +9,7 @@ export default {
     all: [ authenticate('jwt') ],
     find: [],
     get: [],
-    create: [],
+    create: [setCreatedBy('user')],
     update: [],
     patch: [],
     remove: []

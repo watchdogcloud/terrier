@@ -24,8 +24,8 @@ export default function (app: Application): void {
       app.channel('anonymous').leave(connection);
 
       // Add it to the authenticated user channel
-      app.channel(connection.user._id.toHexString()).join(connection);
-      console.log(app.channels);
+      // app.channel(connection.user._id.toHexString()).join(connection);
+      // console.log(app.channels);
       // Channels can be named anything and joined on any condition 
 
       // E.g. to send real-time events only to admins use
@@ -44,10 +44,10 @@ export default function (app: Application): void {
   app.publish((data: any, context: HookContext) => {
     // Here you can add event publishers to channels set up in `channels.ts`
     // To publish only for a specific event use `app.publish(eventname, () => {})`
-    console.log('data.user',data.user);
+    // console.log('data.user',data.user);
     console.log('Publishing all events to all authenticated users. See `channels.ts` and https://docs.feathersjs.com/api/channels.html for more information.'); // eslint-disable-line
     // e.g. to publish all service events to all authenticated users use
-    return app.channel(data.user?._id.toHexString());
+    // return app.channel(data.user?._id.toHexString());
   });
 
   // app.publish('recv.echo', (data, context) => {
