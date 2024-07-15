@@ -26,6 +26,17 @@ export default function (app: Application): Model<any> {
       type: Schema.Types.ObjectId,
       ref: 'network'
     }],
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'users'
+    },
+    project: {
+      type: Schema.Types.ObjectId,
+      ref: 'projects'
+    },
+    callNumber: {
+      type: Number
+    }
   }, {
     timestamps: true
   });

@@ -1,6 +1,7 @@
 import { EachMessagePayload } from 'kafkajs';
 import app from '../app';
 import fs from 'node:fs';
+
 const insertIntoDatabase = async (payload: EachMessagePayload) => {
   try {
     console.log('insertIntoPayload');
@@ -25,13 +26,13 @@ const insertIntoDatabase = async (payload: EachMessagePayload) => {
       disk: diskRes._id,
       mem: memRes._id,
       network: Array.isArray(networkRes) ? networkRes.map((net: any) => net._id) : networkRes._id,
+      user: keyOwner.user,
+      project: keyOwner.project,
+      callNumber: keyOwner.totalCalls
     };
 
     fs.writeFileSync('met.json', JSON.stringify(ids));
-
     await app.service('recv-data')._create(ids);
-
-    console.log('queue se nikalke keyOwner = ', keyOwner);
   } catch (error: any) {
     console.error('Error inserting into database:', error.message, error.stack);
     throw new Error(error);
