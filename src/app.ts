@@ -21,6 +21,7 @@ import authentication from './authentication';
 import mongoose from './mongoose';
 import kafka, { createNewTopicIfDoesNotExist, createAndSetProducer } from './kafka';
 import runConsumers from './run-consumers';
+import redis from './redis';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const app: Application = express(feathers());
@@ -45,6 +46,7 @@ app.configure(express.rest());
 app.configure(socketio());
 
 app.configure(mongoose);
+app.configure(redis);
 app.configure(kafka);
 app.configure(createNewTopicIfDoesNotExist);
 app.configure(runConsumers);
