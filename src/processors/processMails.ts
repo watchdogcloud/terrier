@@ -26,8 +26,9 @@ const processMails = async (payload: EachMessagePayload) => {
     } = message;
 
     //pull from db..
-    const rList = await app.service('projects')._fi;
-    const recipients :string[] = [''];
+    const rList = await app.service('projects')._get(project);
+
+    const recipients :string[] = rList.recipientsList;
     
     // send mail; 
     const mailer = new Mailer();
