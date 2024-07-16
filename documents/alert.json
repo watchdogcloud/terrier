@@ -1,0 +1,1 @@
+{"cpu":{"spiked":true,"averagingAt":93.30524570755037,"thresholdSet":70,"time":"2024-07-16T16:52:44.083Z"},"mem":{"spiked":false,"averagingAt":58.24963651548677,"thresholdSet":80,"time":"2024-07-16T16:52:44.083Z"},"disk":{"spiked":false,"averagingAt":46.47777947406973,"thresholdSet":90,"time":"2024-07-16T16:52:44.083Z"}}
