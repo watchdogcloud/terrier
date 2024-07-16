@@ -21,10 +21,12 @@ const processMails = async (payload: EachMessagePayload) => {
       threshold,
       component,
       incidentTime,
-      alertType
+      alertType,
+      project
     } = message;
 
     //pull from db..
+    const rList = await app.service('projects')._fi;
     const recipients :string[] = [''];
     
     // send mail; 

@@ -21,7 +21,7 @@ const processMetrics = async (payload: EachMessagePayload) => {
 
     const spikeThreshold = { cpu: 70, mem: 80, disk: 90 };
 
-    const alerts = checkAllSpikes({ cpuAvg, memUsedPercent: mem.usedPercent, diskUsedPercent: disk.usedPercent }, spikeThreshold);
+    const alerts = checkAllSpikes({ cpuAvg, memUsedPercent: mem.usedPercent, diskUsedPercent: disk.usedPercent }, spikeThreshold,keyOwner.project);
     console.log(alerts);
 
     await checkCummulative(keyOwner.user, keyOwner.project, { cpu: cpuAvg, disk: disk.usedPercent, mem: mem.usedPercent });
@@ -40,23 +40,24 @@ const calculateAllCoreAvg = <T extends number = number>(cpu: T[]) => {
 
 const checkAllSpikes = (
   metrics: { cpuAvg: number; memUsedPercent: number; diskUsedPercent: number },
-  thresholds: { cpu: number; mem: number; disk: number }
+  thresholds: { cpu: number; mem: number; disk: number },
+  project:string,
 ) => {
   const { cpuAvg, memUsedPercent, diskUsedPercent } = metrics;
   const { cpu, mem, disk } = thresholds;
 
-  const cpuAlert = checkSpike(cpuAvg, cpu, 'CPU');
-  const memAlert = checkSpike(memUsedPercent, mem, 'MEM');
-  const diskAlert = checkSpike(diskUsedPercent, disk, 'DISK');
+  const cpuAlert = checkSpike(cpuAvg, cpu, 'CPU',project);
+  const memAlert = checkSpike(memUsedPercent, mem, 'MEM',project);
+  const diskAlert = checkSpike(diskUsedPercent, disk, 'DISK',project);
 
   return { cpu: cpuAlert, mem: memAlert, disk: diskAlert };
 };
 
-const checkSpike = (value: number, threshold: number, metricType: string) => {
+const checkSpike = (value: number, threshold: number, metricType: string, project:string) => {
   const isSpiked = value > threshold;
 
   if (isSpiked) {
-    pushToAlertTopicIfSIG(value, threshold, metricType, new Date(),'Spike');
+    pushToAlertTopicIfSIG(value, threshold, metricType, new Date(),'Spike',project);
   }
 
   return {
@@ -67,7 +68,7 @@ const checkSpike = (value: number, threshold: number, metricType: string) => {
   };
 };
 
-const pushToAlertTopicIfSIG = async (cumulativeOrSpikeVal: number, threshold: number, component: string, incidentTime: Date,alertType: string) => {
+const pushToAlertTopicIfSIG = async (cumulativeOrSpikeVal: number, threshold: number, component: string, incidentTime: Date,alertType: string, project: string) => {
   // Implementation for pushing to alert topic
   const producer = app.get('kafkaProducer');
   
@@ -76,7 +77,8 @@ const pushToAlertTopicIfSIG = async (cumulativeOrSpikeVal: number, threshold: nu
     threshold,
     component,
     incidentTime,
-    alertType
+    alertType,
+    project
   };
 
   // push to queue for mailing 
@@ -123,7 +125,7 @@ const checkCummulative = async (user: string, project: string, metrics: { cpu: n
     const diskAvg = Number(aggregatedValues.disk) / count;
     const memAvg = Number(aggregatedValues.mem) / count;
 
-    await pushToQueueIfCritical(cpuAvg, diskAvg, memAvg, cumulativeThreshold);
+    await pushToQueueIfCritical(cpuAvg, diskAvg, memAvg, cumulativeThreshold, project);
 
     // Reset for next batch window..
     await redis.hSet(userProject, {
@@ -148,20 +150,21 @@ const pushToQueueIfCritical = async (
   cpuAvg: number,
   diskAvg: number,
   memAvg: number,
-  thresholds: { cpu: number; mem: number; disk: number }
+  thresholds: { cpu: number; mem: number; disk: number },
+  project: string
 ) => {
   const { cpu, mem, disk } = thresholds;
 
   if (cpuAvg > cpu) {
-    await pushToAlertTopicIfSIG(cpuAvg, cpu, 'CPU', new Date(),'Cumulative');
+    await pushToAlertTopicIfSIG(cpuAvg, cpu, 'CPU', new Date(),'Cumulative',project);
   }
 
   if (diskAvg > disk) {
-    await pushToAlertTopicIfSIG(diskAvg, disk, 'DISK', new Date(),'Cumulative');
+    await pushToAlertTopicIfSIG(diskAvg, disk, 'DISK', new Date(),'Cumulative',project);
   }
 
   if (memAvg > mem) {
-    await pushToAlertTopicIfSIG(memAvg, mem, 'MEMORY', new Date(),'Cumulative');
+    await pushToAlertTopicIfSIG(memAvg, mem, 'MEMORY', new Date(),'Cumulative',project);
   }
 };
 
