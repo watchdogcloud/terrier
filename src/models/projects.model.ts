@@ -36,6 +36,13 @@ export default function (app: Application): Model<any> {
       enum: ['active', 'inactive'],
       default: 'active'
     },
+    recipientsList: [
+      {
+        type: String,
+        trim:true,
+        lowercase:true,
+      }
+    ],
     metadata: {
       type: Map,
       of: String

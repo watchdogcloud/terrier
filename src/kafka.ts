@@ -119,12 +119,10 @@ const createProducerOnTopic: any = (app: Application): Producer => {
   }
 };
 
-let i = 0;
+const i = 0;
 export const produceMessage = async (producer: Producer, kvObject: Array<Message>, topicName: string) => {
 
   try {
-    i+=1;
-    console.log('called i = ',i);
     const x = await producer.send({
       topic: topicName,
       messages: kvObject,

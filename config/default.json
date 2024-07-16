@@ -65,5 +65,12 @@
   },
   "keygen": {
     "length": 32
+  },
+  "smtp": {
+    "email": "sampagon738@gmail.com",
+    "password": "jppxywoiaflvneue",
+    "host": "smtp.gmail.com",
+    "port": 587,
+    "secure": false
   }
 }

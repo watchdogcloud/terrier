@@ -62,9 +62,11 @@
     "mongodb-core": "^3.2.7",
     "mongoose": "^6.3.6",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.14",
     "razorpay": "^2.9.4",
     "redis": "^4.6.15",
     "serve-favicon": "^2.5.0",
+    "twig": "^1.17.1",
     "winston": "^3.0.0"
   },
   "devDependencies": {
@@ -73,8 +75,10 @@
     "@types/jest": "^29.5.11",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/multer": "^1.4.11",
+    "@types/nodemailer": "^6.4.15",
     "@types/serve-favicon": "^2.5.7",
     "@types/socket.io-parser": "^3.0.0",
+    "@types/twig": "^1.12.16",
     "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
