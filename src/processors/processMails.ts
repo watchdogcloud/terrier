@@ -65,13 +65,3 @@ const subjectBuilder = <T extends string = string>(alertType: T) : string => {
     return 'Alert: Threshold Exceeded';
   }
 };
-
-/**
-    const data = {
-      cumulativeOrSpikeVal,
-      threshold,
-      component,
-      incidentTime,
-      alertType
-    };
- */

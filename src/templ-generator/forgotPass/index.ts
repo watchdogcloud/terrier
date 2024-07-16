@@ -1,4 +1,5 @@
 import Twig from 'twig';
+import LocaleEnum from '../../constants/locales-support';
 // import fs from 'fs';
 
 // require.extensions['.twig'] = function (module, filename) {
@@ -90,7 +91,7 @@ const en = `<!DOCTYPE html>
 
 
 export default {
-  en: Twig.twig({
+  [LocaleEnum.EN]: Twig.twig({
     data: en,
   }),
   // more locales... 
