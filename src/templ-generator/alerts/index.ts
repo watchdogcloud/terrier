@@ -15,78 +15,79 @@ import LocaleEnum from '../../constants/locales-support';
 */    
 
 const en = `<!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Reset Your Password on Fiole</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      color: #333;
-      margin: 0;
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #ffffff;
-      padding: 20px;
-      border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .header {
-      text-align: center;
-      padding-bottom: 20px;
-    }
-
-    .header img {
-      max-width: 100px;
-    }
-
-    .content {
-      text-align: center;
-    }
-
-    .otp {
-      font-size: 24px;
-      font-weight: bold;
-      margin: 20px 0;
-    }
-
-    .footer {
-      text-align: center;
-      color: #888;
-      font-size: 12px;
-      margin-top: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Alert Notification</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #111;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .header {
+            background-color: #000;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .content {
+            padding: 20px;
+        }
+        .content p {
+            margin: 0 0 15px;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #888;
+        }
+        .button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
 </head>
-
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>Reset Your Password</h1>
+    <div class="container">
+        <div class="header">
+            <h1>WatchdogCloud Alert</h1>
+        </div>
+        <div class="content">
+            <p>Dear recipient,</p>
+            <p>This is to notify you that the <strong>{{ component }}</strong> has exceeded the defined threshold.</p>
+            <p><strong>Alert Type:</strong> {{ alertType }}</p>
+            <p><strong>Component:</strong> {{ component }}</p>
+            <p><strong>Value:</strong> {{ cumulativeOrSpikeVal }}</p>
+            <p><strong>Threshold:</strong> {{ threshold }}</p>
+            <p><strong>Incident Time:</strong> {{ incidentTime }}</p>
+            <p>Please take the necessary actions to resolve this issue.</p>
+            <p>Sent from WatchdogCloud.</p>
+            <a href="https://your-action-link.com" class="button">Take Action</a>
+        </div>
+        <div class="footer">
+            <p>&copy; {{ "now"|date("Y") }} WatchdogCloud - A Free Software.</p>
+        </div>
     </div>
-    <div class="content">
-      <p>Hi {{username }},</p>
-      <p>We received a request to reset your password for your Fiole account. Please use the following OTP to reset your
-        password:</p>
-      <div class="otp">{{otp}}</div>
-      <p>This OTP is valid for the next {{ expiration }} minutes. Please do not share this OTP with anyone.</p>
-      <p>If you did not request a password reset, please ignore this email or contact our support team for assistance.
-      </p>
-    </div>
-    <div class="footer">
-      <p>Thanks,<br>The Fiole Team</p>
-      <p>Note: This is an automated email. Please do not reply to this email.</p>
-    </div>
-  </div>
 </body>
-
 </html>`;
 
 
