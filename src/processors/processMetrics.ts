@@ -3,9 +3,9 @@ import app from '../app';
 import { RedisClientType } from 'redis';
 import fs from 'node:fs';
 
-const processCriticalAlerts = async (payload: EachMessagePayload) => {
+const processMetrics = async (payload: EachMessagePayload) => {
   try {
-    console.log('processCriticalAlerts');
+    console.log('processMetrics');
 
     if (!payload.message.value) {
       throw new Error('Message value is missing');
@@ -146,4 +146,4 @@ const pushToQueueIfCritical = async (
   }
 };
 
-export default processCriticalAlerts;
+export default processMetrics;

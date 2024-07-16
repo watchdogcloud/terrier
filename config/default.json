@@ -57,7 +57,7 @@
         "replicationFactor": 1
       },
       {
-        "name": "system.alerts.critical",
+        "name": "critical.alerts",
         "numPartitions": 3,
         "replicationFactor": 1
       }
