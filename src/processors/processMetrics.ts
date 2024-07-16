@@ -45,9 +45,9 @@ const checkAllSpikes = (
   const { cpuAvg, memUsedPercent, diskUsedPercent } = metrics;
   const { cpu, mem, disk } = thresholds;
 
-  const cpuAlert = checkSpike(cpuAvg, cpu, 'cpu');
-  const memAlert = checkSpike(memUsedPercent, mem, 'mem');
-  const diskAlert = checkSpike(diskUsedPercent, disk, 'disk');
+  const cpuAlert = checkSpike(cpuAvg, cpu, 'CPU');
+  const memAlert = checkSpike(memUsedPercent, mem, 'MEM');
+  const diskAlert = checkSpike(diskUsedPercent, disk, 'DISK');
 
   return { cpu: cpuAlert, mem: memAlert, disk: diskAlert };
 };
