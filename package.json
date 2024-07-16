@@ -40,7 +40,7 @@
   },
   "types": "lib/",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.583.0",
+    "@aws-sdk/client-s3": "^3.614.0",
     "@feathersjs/authentication": "^4.5.15",
     "@feathersjs/authentication-local": "^4.5.15",
     "@feathersjs/authentication-oauth": "^4.5.15",
