@@ -2,27 +2,26 @@ import { Consumer } from 'kafkajs';
 import { Application } from './declarations';
 import { createConsumerOnTopic } from './kafka';
 import fs from 'node:fs';
-import processCriticalAlerts from './handlers/processCriticalAlerts';
-import insertIntoDatabase from './handlers/insertIntoDatabase';
-import streamLiveMetrics from './handlers/streamLiveMetrics';
-
+import processMetrics from './processors/processMetrics';
+import insertIntoDatabase from './processors/insertIntoDatabase';
+import processMails from './processors/processMails';
+// import streamLiveMetrics from './handlers/streamLiveMetrics';
 
 export default async function setupConsumers(app: Application): Promise<void> {
   console.log('Starting consumer setup...');
   try {
-
     const consumerList = [
       {
         groupId: 'system.metrics.processor',
         topics: ['system.metrics'],
         numOfConsumers: 3,
-        taskHandler: streamLiveMetrics,
+        taskHandler: processMetrics,
       },
       {
         groupId: 'critical.alerts.handler',
-        topics: ['system.alerts.critical'],
+        topics: ['critical.alerts'],
         numOfConsumers: 3,
-        taskHandler: processCriticalAlerts,
+        taskHandler: processMails,
       },
       {
         groupId: 'database.inserter',
@@ -41,7 +40,6 @@ export default async function setupConsumers(app: Application): Promise<void> {
     );
 
     const createdConsumers = await Promise.all(consumerCreationPromises);
-
     createdConsumers.forEach((consumer) => CONSUMER_POOL.push(consumer));
 
     console.log(`Consumer setup completed. Total consumers created: ${CONSUMER_POOL.length}`);

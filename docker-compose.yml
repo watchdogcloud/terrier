@@ -12,7 +12,7 @@ services:
       - "9092:9092"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.1.6:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://172.30.144.1:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
@@ -29,72 +29,7 @@ services:
       KAFKA_CLUSTERS_0_NAME: wizard_test
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
 
-# auto.include.jmx.reporter = true
-# kafka-ui             |  bootstrap.servers = [kafka:9092]
-# kafka-ui             |  client.dns.lookup = use_all_dns_ips
-# kafka-ui             |  client.id = kafka-ui-admin-1720871496-1
-# kafka-ui             |  connections.max.idle.ms = 300000
-# kafka-ui             |  default.api.timeout.ms = 60000
-# kafka-ui             |  metadata.max.age.ms = 300000
-# kafka-ui             |  metric.reporters = []
-# kafka-ui             |  metrics.num.samples = 2
-# kafka-ui             |  metrics.recording.level = INFO
-# kafka-ui             |  metrics.sample.window.ms = 30000
-# kafka-ui             |  receive.buffer.bytes = 65536
-# kafka-ui             |  reconnect.backoff.max.ms = 1000
-# kafka-ui             |  reconnect.backoff.ms = 50
-# kafka-ui             |  request.timeout.ms = 30000
-# kafka-ui             |  retries = 2147483647
-# kafka-ui             |  retry.backoff.ms = 100
-# kafka-ui             |  sasl.client.callback.handler.class = null
-# kafka-ui             |  sasl.jaas.config = null
-# kafka-ui             |  sasl.kerberos.kinit.cmd = /usr/bin/kinit
-# kafka-ui             |  sasl.kerberos.min.time.before.relogin = 60000
-# kafka-ui             |  sasl.kerberos.service.name = null
-# kafka-ui             |  sasl.kerberos.ticket.renew.jitter = 0.05
-# kafka-ui             |  sasl.kerberos.ticket.renew.window.factor = 0.8
-# kafka-ui             |  sasl.login.callback.handler.class = null
-# kafka-ui             |  sasl.login.class = null
-# kafka-ui             |  sasl.login.connect.timeout.ms = null
-# kafka-ui             |  sasl.login.read.timeout.ms = null
-# kafka-ui             |  sasl.login.refresh.buffer.seconds = 300
-# kafka-ui             |  sasl.login.refresh.min.period.seconds = 60
-# kafka-ui             |  sasl.login.refresh.window.factor = 0.8
-# kafka-ui             |  sasl.login.refresh.window.jitter = 0.05
-# kafka-ui             |  sasl.login.retry.backoff.max.ms = 10000
-# kafka-ui             |  sasl.login.retry.backoff.ms = 100
-# kafka-ui             |  sasl.mechanism = GSSAPI
-# kafka-ui             |  sasl.oauthbearer.clock.skew.seconds = 30
-# kafka-ui             |  sasl.oauthbearer.expected.audience = null
-# kafka-ui             |  sasl.oauthbearer.expected.issuer = null
-# kafka-ui             |  sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
-# kafka-ui             |  sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
-# kafka-ui             |  sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
-# kafka-ui             |  sasl.oauthbearer.jwks.endpoint.url = null
-# kafka-ui             |  sasl.oauthbearer.scope.claim.name = scope
-# kafka-ui             |  sasl.oauthbearer.sub.claim.name = sub
-# kafka-ui             |  sasl.oauthbearer.token.endpoint.url = null
-# kafka-ui             |  security.protocol = PLAINTEXT
-# kafka-ui             |  security.providers = null
-# kafka-ui             |  send.buffer.bytes = 131072
-# kafka-ui             |  socket.connection.setup.timeout.max.ms = 30000
-# kafka-ui             |  socket.connection.setup.timeout.ms = 10000
-# kafka-ui             |  ssl.cipher.suites = null
-# kafka-ui             |  ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
-# kafka-ui             |  ssl.endpoint.identification.algorithm = https
-# kafka-ui             |  ssl.engine.factory.class = null
-# kafka-ui             |  ssl.key.password = null
-# kafka-ui             |  ssl.keymanager.algorithm = SunX509
-# kafka-ui             |  ssl.keystore.certificate.chain = null
-# kafka-ui             |  ssl.keystore.key = null
-# kafka-ui             |  ssl.keystore.location = null
-# kafka-ui             |  ssl.keystore.password = null
-# kafka-ui             |  ssl.keystore.type = JKS
-# kafka-ui             |  ssl.protocol = TLSv1.3
-# kafka-ui             |  ssl.provider = null
-# kafka-ui             |  ssl.secure.random.implementation = null
-# kafka-ui             |  ssl.trustmanager.algorithm = PKIX
-# kafka-ui             |  ssl.truststore.certificates = null
-# kafka-ui             |  ssl.truststore.location = null
-# kafka-ui             |  ssl.truststore.password = null
-# kafka-ui             |  ssl.truststore.type = JKS
+  redis:
+    image: redis/redis-stack-server:latest
+    ports:
+      - "6379:6379"
