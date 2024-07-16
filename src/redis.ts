@@ -1,4 +1,4 @@
-import { createClient } from 'redis';
+import { createClient, RedisClientType } from 'redis';
 import { Application } from './declarations';
 
 

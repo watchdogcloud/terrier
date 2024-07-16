@@ -20,7 +20,7 @@ export default async function setupConsumers(app: Application): Promise<void> {
       },
       {
         groupId: 'critical.alerts.handler',
-        topics: ['system.alerts.critical'],
+        topics: ['system.metrics'],
         numOfConsumers: 3,
         taskHandler: processCriticalAlerts,
       },

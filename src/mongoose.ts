@@ -9,6 +9,6 @@ export default function (app: Application): void {
     logger.error(err);
     process.exit(1);
   });
-
+  mongoose.set('strictQuery', true);
   app.set('mongooseClient', mongoose);
 }
