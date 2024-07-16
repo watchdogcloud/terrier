@@ -1,5 +1,6 @@
 import { EachMessagePayload } from 'kafkajs';
 import app from '../app';
+import Mailer from '../utilities/mailing';
 
 const processMails = (payload: EachMessagePayload) => {
 
@@ -13,7 +14,8 @@ const processMails = (payload: EachMessagePayload) => {
     const messageString = payload.message.value.toString();
     const message = JSON.parse(messageString);
 
-    // send mail;
+    // send mail; 
+    const mailer = new Mailer();
 
   } catch (error) {
     console.error('Error during consumer setup:', error);

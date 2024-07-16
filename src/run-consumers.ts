@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import processMetrics from './processors/processMetrics';
 import insertIntoDatabase from './processors/insertIntoDatabase';
 import processMails from './processors/processMails';
+import KafkaTopicEnum from './constants/kafka-topics.enum';
 // import streamLiveMetrics from './handlers/streamLiveMetrics';
 
 export default async function setupConsumers(app: Application): Promise<void> {
@@ -13,19 +14,19 @@ export default async function setupConsumers(app: Application): Promise<void> {
     const consumerList = [
       {
         groupId: 'system.metrics.processor',
-        topics: ['system.metrics'],
+        topics: [KafkaTopicEnum.SYSTEM_METRICS],
         numOfConsumers: 3,
         taskHandler: processMetrics,
       },
       {
         groupId: 'critical.alerts.handler',
-        topics: ['critical.alerts'],
+        topics: [KafkaTopicEnum.CRITICAL_ALERTS],
         numOfConsumers: 3,
         taskHandler: processMails,
       },
       {
         groupId: 'database.inserter',
-        topics: ['system.metrics'],
+        topics: [KafkaTopicEnum.SYSTEM_METRICS],
         numOfConsumers: 3,
         taskHandler: insertIntoDatabase,
       },

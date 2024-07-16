@@ -2,6 +2,7 @@ import { EachMessagePayload } from 'kafkajs';
 import app from '../app';
 import { RedisClientType } from 'redis';
 import fs from 'node:fs';
+import { produceMessage } from '../kafka';
 
 const processMetrics = async (payload: EachMessagePayload) => {
   try {
@@ -55,7 +56,7 @@ const checkSpike = (value: number, threshold: number, metricType: string) => {
   const isSpiked = value > threshold;
 
   if (isSpiked) {
-    pushToAlertTopicIfSIG(value, threshold, metricType, new Date());
+    pushToAlertTopicIfSIG(value, threshold, metricType, new Date(),'Spike');
   }
 
   return {
@@ -66,8 +67,26 @@ const checkSpike = (value: number, threshold: number, metricType: string) => {
   };
 };
 
-const pushToAlertTopicIfSIG = async (cumulativeOrSpikeVal: number, threshold: number, component: string, incidentTime: Date) => {
+const pushToAlertTopicIfSIG = async (cumulativeOrSpikeVal: number, threshold: number, component: string, incidentTime: Date,alertType: string) => {
   // Implementation for pushing to alert topic
+  const producer = app.get('kafkaProducer');
+  
+  const data = {
+    cumulativeOrSpikeVal,
+    threshold,
+    component,
+    incidentTime,
+    alertType
+  };
+
+  // push to queue for mailing 
+  await produceMessage(producer, [
+    {
+      value: Buffer.from(JSON.stringify(data)),
+    }
+  ],
+  'critical.alerts');
+
   console.log(`ALERT: ${component} exceeded threshold! Value: ${cumulativeOrSpikeVal}, Threshold: ${threshold}, Time: ${incidentTime}`);
 };
 
@@ -106,7 +125,7 @@ const checkCummulative = async (user: string, project: string, metrics: { cpu: n
 
     await pushToQueueIfCritical(cpuAvg, diskAvg, memAvg, cumulativeThreshold);
 
-    // Reset for next batch window
+    // Reset for next batch window..
     await redis.hSet(userProject, {
       cpu: metrics.cpu.toString(),
       disk: metrics.disk.toString(),
@@ -115,7 +134,7 @@ const checkCummulative = async (user: string, project: string, metrics: { cpu: n
       lastProcessedAt: new Date().toISOString()
     });
   } else {
-    // Time < 5 minutes, just update the redis values
+    // T < 5 minutes, just updatez the redis values
     await redis.hSet(userProject, {
       cpu: (Number(aggregatedValues.cpu) + metrics.cpu).toString(),
       disk: (Number(aggregatedValues.disk) + metrics.disk).toString(),
@@ -134,15 +153,15 @@ const pushToQueueIfCritical = async (
   const { cpu, mem, disk } = thresholds;
 
   if (cpuAvg > cpu) {
-    await pushToAlertTopicIfSIG(cpuAvg, cpu, 'CPU', new Date());
+    await pushToAlertTopicIfSIG(cpuAvg, cpu, 'CPU', new Date(),'Cumulative');
   }
 
   if (diskAvg > disk) {
-    await pushToAlertTopicIfSIG(diskAvg, disk, 'DISK', new Date());
+    await pushToAlertTopicIfSIG(diskAvg, disk, 'DISK', new Date(),'Cumulative');
   }
 
   if (memAvg > mem) {
-    await pushToAlertTopicIfSIG(memAvg, mem, 'MEMORY', new Date());
+    await pushToAlertTopicIfSIG(memAvg, mem, 'MEMORY', new Date(),'Cumulative');
   }
 };
 
