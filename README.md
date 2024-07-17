@@ -4,6 +4,7 @@
 
 <img src=".github/logo.png" alt="canario.png" width='300'></img>
 <hr>
+
 ![example workflow](https://github.com/watchdogcloud/terrier/actions/workflows/ghcr-deploy.yml/badge.svg)
 
 </div>
