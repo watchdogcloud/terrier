@@ -110,5 +110,3 @@ $RECYCLE.BIN/
 # Others
 lib/
 data/
-
-.github/workflows/public-release.yml
