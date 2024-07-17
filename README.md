@@ -39,7 +39,7 @@ It also Persistently stores historical metrics and metadata,project and user aut
 
 ## Installation
 
-> [!NOTE]
+> [!WARNING]
 > Terrier relies on Kafka, Zookeeper, and Redis to facilitate communication between services and data computation. Terrier won't work without it's dependencies.
 
 ### Prerequisites
