@@ -1,1 +1,89 @@
-{}
+{
+    "host": "localhost",
+    "port": 3030,
+    "public": "../public/",
+    "paginate": {
+      "default": 10,
+      "max": 50
+    },
+    "authentication": {
+      "entity": "user",
+      "service": "users",
+      "secret": "fcayYMajEwHSO2KmtEeem3fCgDA=",
+      "authStrategies": [
+        "jwt",
+        "local",
+        "server-otpless-whatsapp",
+        "local-otpless-whatsapp"
+      ],
+      "jwtOptions": {
+        "header": {
+          "typ": "access"
+        },
+        "audience": "https://yourdomain.com",
+        "issuer": "feathers",
+        "algorithm": "HS256",
+        "expiresIn": "365d"
+      },
+      "local": {
+        "usernameField": "email",
+        "passwordField": "password"
+      },
+      "server-otpless-whatsapp": {
+        "usernameField": "phone",
+        "passwordField": "code"
+      },
+      "local-otpless-whatsapp": {
+        "usernameField": "phone",
+        "passwordField": "code"
+      }
+    },
+    "mongodb": "<MongoDB URI>",
+    "otpless": {
+      "clientId": "<OTPLess ClientId>",
+      "clientSecret": "<OTPLess Client Secret>",
+      "expiry": 300,
+      "otpLength": 6,
+      "hash": "saltysaswat"
+    },
+    "kafkaConf": {
+      "bootstrap_servers": [
+        "localhost:9092"
+      ],
+      "topics": [
+        {
+          "name": "system.metrics",
+          "numPartitions": 3,
+          "replicationFactor": 1
+        },
+        {
+          "name": "critical.alerts",
+          "numPartitions": 3,
+          "replicationFactor": 1
+        }
+      ]
+    },
+    "keygen": {
+      "length": 32
+    },
+    "smtp": {
+      "email": "mysmtp@gmail.com",
+      "password": "mysmtppass",
+      "host": "smtp.gmail.com",
+      "port": 587,
+      "secure": false
+    },
+    "alerts": {
+      "spike": { 
+        "cpu": 90,
+        "mem": 90,
+        "disk": 90
+      },
+      "cumulative": {
+        "cpu": 90,
+        "mem": 90,
+        "disk": 90,
+        "durationInMin":5
+      }
+    }
+  }
