@@ -38,13 +38,13 @@
       "passwordField": "code"
     }
   },
-  "mongodb": "mongodb+srv://root:root@cluster0.nl9rmmq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+  "mongodb": "<MongoDB URI>",
   "otpless": {
-    "clientId": "9180OD8RFAMI1IGNEEA24NU647UEUCD3",
-    "clientSecret": "1ovbsmy4ienf0877p4kk7x3h4ecljbj2",
+    "clientId": "<OTPLess ClientId>",
+    "clientSecret": "<OTPLess Client Secret>",
     "expiry": 300,
     "otpLength": 6,
-    "hash": "hehehehe"
+    "hash": "saltysaswat"
   },
   "kafkaConf": {
     "bootstrap_servers": [
@@ -67,8 +67,8 @@
     "length": 32
   },
   "smtp": {
-    "email": "sampagon738@gmail.com",
-    "password": "jppxywoiaflvneue",
+    "email": "mysmtp@gmail.com",
+    "password": "mysmtppass",
     "host": "smtp.gmail.com",
     "port": 587,
     "secure": false
