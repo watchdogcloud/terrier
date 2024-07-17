@@ -72,5 +72,18 @@
     "host": "smtp.gmail.com",
     "port": 587,
     "secure": false
+  },
+  "alerts": {
+    "spike": { 
+      "cpu": 90,
+      "mem": 90,
+      "disk": 90
+    },
+    "cumulative": {
+      "cpu": 90,
+      "mem": 90,
+      "disk": 90,
+      "durationInMin":5
+    }
   }
 }

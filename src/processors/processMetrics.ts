@@ -19,7 +19,7 @@ const processMetrics = async (payload: EachMessagePayload) => {
 
     const cpuAvg = calculateAllCoreAvg(cpu);
 
-    const spikeThreshold = { cpu: 70, mem: 80, disk: 90 };
+    const spikeThreshold = app.get('alerts').spike;
 
     const alerts = checkAllSpikes({ cpuAvg, memUsedPercent: mem.usedPercent, diskUsedPercent: disk.usedPercent }, spikeThreshold,keyOwner.project);
     console.log(alerts);
@@ -97,7 +97,7 @@ const checkCummulative = async (user: string, project: string, metrics: { cpu: n
 
   const userProject = `${user}:${project}`;
 
-  const cumulativeThreshold = { cpu: 60, mem: 70, disk: 80 };
+  const cumulativeThreshold = app.get('alerts').cumulative;
 
   const aggregatedValues = await redis.hGetAll(userProject);
 
@@ -116,7 +116,7 @@ const checkCummulative = async (user: string, project: string, metrics: { cpu: n
   const lastProcessedAt = new Date(aggregatedValues.lastProcessedAt);
 
   const fiveMinutesAgo = new Date();
-  fiveMinutesAgo.setMinutes(fiveMinutesAgo.getMinutes() - 5);
+  fiveMinutesAgo.setMinutes(fiveMinutesAgo.getMinutes() - app.get('alerts').cumulative.duration);
 
   if (lastProcessedAt < fiveMinutesAgo) {
     // 5 minutes elapsed, process the batch
