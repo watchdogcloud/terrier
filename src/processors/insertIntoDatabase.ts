@@ -31,7 +31,7 @@ const insertIntoDatabase = async (payload: EachMessagePayload) => {
       callNumber: keyOwner.totalCalls
     };
 
-    fs.writeFileSync('met.json', JSON.stringify(ids));
+    fs.writeFileSync('documents/met.json', JSON.stringify(ids));
     await app.service('v1/recv-data')._create(ids);
   } catch (error: any) {
     console.error('Error inserting into database:', error.message, error.stack);

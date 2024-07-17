@@ -45,7 +45,7 @@ export default async function setupConsumers(app: Application): Promise<void> {
 
     console.log(`Consumer setup completed. Total consumers created: ${CONSUMER_POOL.length}`);
     console.log({ CONSUMER_POOL });
-    fs.writeFileSync('deleteme.json', JSON.stringify(CONSUMER_POOL));
+    fs.writeFileSync('./documents/deleteme.json', JSON.stringify(CONSUMER_POOL));
   } catch (error) {
     console.error('Error during consumer setup:', error);
     throw new Error('Consumer setup failed');
