@@ -79,7 +79,7 @@
     "@types/serve-favicon": "^2.5.7",
     "@types/socket.io-parser": "^3.0.0",
     "@types/twig": "^1.12.16",
-    "@types/uuid": "^9.0.8",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
     "axios": "^1.6.7",
