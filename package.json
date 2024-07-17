@@ -57,7 +57,7 @@
     "dayjs": "^1.11.10",
     "feathers-hooks-common": "6.1.5",
     "feathers-mongoose": "^8.5.1",
-    "helmet": "^5.1.0",
+    "helmet": "^7.1.0",
     "kafkajs": "^2.2.4",
     "mongodb-core": "^3.2.7",
     "mongoose": "^6.3.6",
