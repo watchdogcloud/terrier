@@ -26,7 +26,7 @@ const processMetrics = async (payload: EachMessagePayload) => {
 
     await checkCummulative(keyOwner.user, keyOwner.project, { cpu: cpuAvg, disk: disk.usedPercent, mem: mem.usedPercent });
 
-    fs.writeFileSync('alert.json', JSON.stringify(alerts));
+    fs.writeFileSync('./documents/alert.json', JSON.stringify(alerts));
   } catch (error: any) {
     console.error(error);
     throw new Error(error);

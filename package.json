@@ -29,7 +29,7 @@
     "dev": "ts-node-dev --no-notify src/",
     "start": "yarn run compile && node --max-old-space-size=4096 lib//",
     "mocha": "mocha --require ts-node/register --require source-map-support/register \"test/**/*.ts\" --recursive --exit",
-    "compile": "shx rm -rf lib/ && chmod u+rwx ./decoratorfixer.sh && ./decoratorfixer.sh && tsc",
+    "compile": "shx rm -rf lib/ && chmod u+rwx ./scripts/decoratorfixer.sh && ./scripts/decoratorfixer.sh && tsc",
     "prepare": "husky"
   },
   "standard": {

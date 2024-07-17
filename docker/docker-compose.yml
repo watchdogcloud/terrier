@@ -36,7 +36,7 @@ services:
   
   terrier: 
     build: 
-      context: .
+      context: ../
       dockerfile: Dockerfile
 
     ports: 
