@@ -2,7 +2,7 @@
 
 # Watchdog - Terrier Config and Management Server
 
-<img src=".github/logo.png" alt="canario.png" width='150'></img>
+<img src=".github/logo.png" alt="canario.png" width='300'></img>
 
 <hr>
 
