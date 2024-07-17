@@ -95,6 +95,8 @@ To configure Terrier, edit the `config/default.json` file. Below are the attribu
 | `alerts.cumulative.disk` | The disk usage threshold for cumulative alerts. |
 | `alerts.cumulative.durationInMin` | The duration in minutes for cumulative alerts. |
 
+A sample configuration file is present at `config/test.json`
+
 ### JWT Options
 
 The `authentication.jwtOptions` configuration allows you to customize the properties of the JWT (JSON Web Token) used for authentication. Here's a detailed explanation of each option:
