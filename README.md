@@ -3,9 +3,7 @@
 # Watchdog - Terrier Config and Management Server
 
 <img src=".github/logo.png" alt="canario.png" width='300'></img>
-
 <hr>
-
 ![example workflow](https://github.com/watchdogcloud/terrier/actions/workflows/ghcr-deploy.yml/badge.svg)
 
 </div>
@@ -155,5 +153,11 @@ Terrier's upcoming development roadmap:
 
 For updates, documentation, and community support, visit the [Terrier GitHub repository](https://github.com/watchdogcloud/terrier). 
 
-Enjoy monitoring with Terrier! 🐕
+<div align='center'>
+  <img src="https://skillicons.dev/icons?i=kafka,ts,redis,docker,"></img>
+</div>
+<hr>
+<div align='center'>
+  Enjoy monitoring with Terrier! 🐕
+</div>
 
